@@ -1,0 +1,77 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+	content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+	theme: {
+		extend: {
+			colors: {
+				"rose-dust": {
+					50: "#fdf2f4",
+					100: "#fce7eb",
+					200: "#f9d0d9",
+					300: "#f4a8b8",
+					400: "#ed7891",
+					500: "#e4526f",
+					600: "#d1335a",
+					700: "#b02449",
+					800: "#932043",
+					900: "#7c1d3e",
+				},
+				sage: {
+					50: "#f6f7f6",
+					100: "#e3e6e3",
+					200: "#c7cdc7",
+					300: "#a3aea3",
+					400: "#7e8c7e",
+					500: "#637063",
+					600: "#4e5a4e",
+					700: "#414841",
+					800: "#363c36",
+					900: "#2e322e",
+				},
+				cream: {
+					50: "#fefcf8",
+					100: "#fdf8ee",
+					200: "#faf0d5",
+					300: "#f6e4b3",
+					400: "#f0d385",
+					500: "#eac55f",
+					600: "#deb143",
+					700: "#c89936",
+					800: "#a67b30",
+					900: "#88652a",
+				},
+				"dusty-blue": {
+					50: "#f4f6f8",
+					100: "#e8ecf0",
+					200: "#d5dde4",
+					300: "#b7c5d1",
+					400: "#93a7b9",
+					500: "#778ca3",
+					600: "#66788e",
+					700: "#576474",
+					800: "#4a5460",
+					900: "#404751",
+				},
+			},
+			fontFamily: {
+				serif: ["Playfair Display", "serif"],
+				sans: ["Inter", "system-ui", "sans-serif"],
+			},
+			spacing: {
+				18: "4.5rem",
+				22: "5.5rem",
+			},
+			borderRadius: {
+				"2xl": "1rem",
+				"3xl": "1.5rem",
+				"4xl": "2rem",
+			},
+			boxShadow: {
+				soft: "0 4px 20px rgba(0, 0, 0, 0.08)",
+				"soft-lg": "0 8px 40px rgba(0, 0, 0, 0.12)",
+				"inner-soft": "inset 0 2px 4px rgba(0, 0, 0, 0.05)",
+			},
+		},
+	},
+	plugins: [],
+};
