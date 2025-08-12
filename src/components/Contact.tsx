@@ -4,7 +4,10 @@ import { Send } from "lucide-react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SecureContactInfo from "./SecureContactInfo";
-import { createMailtoLink } from "../utils/contactSecurity";
+import React from "react";
+// Edge Function endpoint and anon key from environment
+const FUNCTION_URL = import.meta.env.VITE_SUPABASE_URL;
+const FUNCTION_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -27,6 +30,7 @@ const Contact = () => {
 		phone: "",
 		message: "",
 	});
+	const [successMessage, setSuccessMessage] = useState("");
 
 	useEffect(() => {
 		const ctx = gsap.context(() => {
@@ -150,22 +154,46 @@ const Contact = () => {
 		setFormData((prev) => ({ ...prev, [name]: value }));
 	};
 
-	const handleSubmit = (e: React.FormEvent) => {
+	const RATE_LIMIT_KEY = "contact_last_sent";
+	const RATE_LIMIT_MS = 5 * 60 * 1000;
+
+	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		const subject = `Consulta - ${formData.name}`;
-		const body = `Nombre: ${formData.name}\nEmail: ${formData.email}\nTeléfono: ${formData.phone}\n\nMensaje:\n${formData.message}`;
-		createMailtoLink(subject, body).then((link) => {
-			window.location.href = link;
-		});
-		gsap.to(formRef.current, {
-			scale: 1.02,
-			duration: 0.25,
-			yoyo: true,
-			repeat: 1,
-			ease: "power2.inOut",
-		});
-		alert("¡Gracias por tu mensaje! Te responderé a la brevedad posible.");
-		setFormData({ name: "", email: "", phone: "", message: "" });
+		const lastSent = localStorage.getItem(RATE_LIMIT_KEY);
+		const now = Date.now();
+		// Enforce rate limit: only one submission per 5 minutes
+		if (lastSent && now - parseInt(lastSent) < RATE_LIMIT_MS) {
+			setSuccessMessage(
+				"Solo puedes enviar un mensaje cada 5 minutos desde este navegador."
+			);
+			return;
+		}
+		// Debug log start of submission
+		console.log("handleSubmit invoked, data:", formData);
+		try {
+			// Send data to Edge Function via HTTP POST
+			const response = await fetch(FUNCTION_URL, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					apikey: FUNCTION_KEY,
+					Authorization: `Bearer ${FUNCTION_KEY}`,
+				},
+				body: JSON.stringify(formData),
+			});
+			if (!response.ok) {
+				const errorData = await response.json().catch(() => null);
+				throw new Error(errorData?.message || `Error ${response.status}`);
+			}
+			const result = await response.json().catch(() => null);
+			console.log("Edge Function response:", result);
+			setSuccessMessage("¡Mensaje enviado correctamente!");
+			setFormData({ name: "", email: "", phone: "", message: "" });
+			localStorage.setItem(RATE_LIMIT_KEY, now.toString());
+		} catch (err) {
+			console.error("Error sending contact form:", err);
+			setSuccessMessage("Hubo un error al enviar el mensaje. Intenta nuevamente.");
+		}
 	};
 
 	return (
@@ -399,7 +427,10 @@ const Contact = () => {
 										/>
 										<label htmlFor="privacy" className="text-gray-600 leading-relaxed">
 											Acepto la{" "}
-											<a href="#" className="text-rose-dust-600 hover:underline">
+											<a
+												href="/politicas-privacidad"
+												className="text-rose-dust-600 hover:underline"
+											>
 												política de privacidad
 											</a>{" "}
 											y el tratamiento de mis datos.
@@ -412,6 +443,9 @@ const Contact = () => {
 										Solicitar Consulta Online <Send size={20} />
 									</button>
 								</form>
+								{successMessage && (
+									<p className="mt-4 text-green-600">{successMessage}</p>
+								)}
 							</div>
 						</div>
 					</div>
