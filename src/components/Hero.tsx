@@ -5,6 +5,8 @@ import { gsap } from "gsap";
 import LottieIcon from "./LottieIcon";
 import sparkle from "../lottie/sparkle.json";
 import calmPulse from "../lottie/calm-pulse.json";
+import FloatingElements from "./FloatingElements";
+import MagicParticles from "./MagicParticles";
 
 const Hero = () => {
 	const heroRef = useRef<HTMLElement>(null);
@@ -102,6 +104,13 @@ const Hero = () => {
 			id="inicio"
 			className="relative section-modern min-h-screen h-screen flex items-center overflow-hidden"
 		>
+			{/* Magic particles for ethereal effect - Multiple layers */}
+			<MagicParticles density="medium" color="warm" behavior="dreamy" />
+			<MagicParticles density="low" color="rainbow" behavior="gentle" />
+
+			{/* Floating decorative elements - Solo 2 elementos sutiles */}
+			<FloatingElements variant="flowers" count={2} section="hero" />
+
 			{/* Background Image */}
 			<div className="absolute inset-0 w-full h-full">
 				<img

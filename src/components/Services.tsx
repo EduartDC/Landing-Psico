@@ -2,6 +2,8 @@ import { useEffect, useRef } from "react";
 import { ArrowRight } from "lucide-react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import FloatingElements from "./FloatingElements";
+import MagicParticles from "./MagicParticles";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -130,8 +132,14 @@ const Services = () => {
 		<section
 			ref={sectionRef}
 			id="servicios"
-			className="section-modern bg-gradient-to-br from-sage-50 via-cream-50 to-rose-dust-50 overflow-hidden"
+			className="section-modern bg-gradient-to-br from-sage-50 via-cream-50 to-rose-dust-50 overflow-hidden relative"
 		>
+			{/* Magic particles for healing atmosphere */}
+			<MagicParticles density="medium" color="cool" behavior="gentle" />
+
+			{/* Floating decorative elements - Solo 1 elemento */}
+			<FloatingElements variant="sparkles" count={1} section="services" />
+
 			<div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-10 xl:px-16 2xl:px-20">
 				<div className="text-center mb-16">
 					<h2

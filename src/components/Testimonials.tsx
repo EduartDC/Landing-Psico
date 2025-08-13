@@ -3,6 +3,8 @@ import { ChevronLeft, ChevronRight, Quote } from "lucide-react";
 import LayoutContainer from "./LayoutContainer";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import FloatingElements from "./FloatingElements";
+import MagicParticles from "./MagicParticles";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -216,6 +218,13 @@ const Testimonials = () => {
 			id="testimonios"
 			className="relative min-h-screen flex items-center py-20 md:py-32 bg-gradient-to-bl from-sage-50 via-cream-50 to-rose-dust-50 overflow-hidden"
 		>
+			{/* Magic particles for emotional atmosphere - Multiple layers */}
+			<MagicParticles density="low" color="rainbow" behavior="gentle" />
+			<MagicParticles density="medium" color="warm" behavior="dreamy" />
+
+			{/* Floating decorative elements - Solo 2 elementos */}
+			<FloatingElements variant="flowers" count={2} section="testimonials" />
+
 			{/* Decorative Elements */}
 			<div className="absolute top-20 right-10 w-32 h-32 bg-gradient-to-br from-rose-dust-200 to-rose-dust-300 rounded-full opacity-20 blur-3xl"></div>
 			<div className="absolute bottom-32 left-16 w-24 h-24 bg-gradient-to-br from-sage-200 to-sage-300 rounded-full opacity-30 blur-3xl"></div>

@@ -3,6 +3,7 @@ import { Heart, Eye, Compass } from "lucide-react";
 import LayoutContainer from "./LayoutContainer";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import MagicParticles from "./MagicParticles";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -114,6 +115,9 @@ const Approach = () => {
 			id="enfoque"
 			className="relative pt-12 lg:pt-16 pb-12 lg:pb-16 bg-gradient-to-br from-sage-50 via-white to-cream-50 overflow-visible"
 		>
+			{/* Magic particles for wisdom and insight */}
+			<MagicParticles density="low" color="nature" behavior="gentle" />
+
 			{/* Line art decorative (leaf / flower) */}
 			<svg
 				className="absolute -top-10 left-2 w-40 h-40 text-rose-dust-300/60"

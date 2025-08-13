@@ -7,6 +7,8 @@ import SecureContactInfo from "./SecureContactInfo";
 import { getContactInfo, createWhatsAppLink } from "../utils/contactSecurity";
 import Swal from "sweetalert2";
 import React from "react";
+import FloatingElements from "./FloatingElements";
+import MagicParticles from "./MagicParticles";
 // Edge Function endpoint and anon key from environment
 const FUNCTION_URL = import.meta.env.VITE_SUPABASE_URL;
 const FUNCTION_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -169,7 +171,7 @@ const Contact = () => {
 	) => {
 		const { name, value } = e.target;
 		setFormData((prev) => ({ ...prev, [name]: value }));
-		
+
 		// Validar en tiempo real si el campo ya fue tocado
 		if (fieldTouched[name as keyof typeof fieldTouched]) {
 			const error = validateField(name, value);
@@ -177,12 +179,14 @@ const Contact = () => {
 		}
 	};
 
-	const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+	const handleBlur = (
+		e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>
+	) => {
 		const { name, value } = e.target;
-		
+
 		// Marcar el campo como tocado
 		setFieldTouched((prev) => ({ ...prev, [name]: true }));
-		
+
 		// Validar el campo
 		const error = validateField(name, value);
 		setFormErrors((prev) => ({ ...prev, [name]: error }));
@@ -192,15 +196,15 @@ const Contact = () => {
 		const isChecked = e.target.checked;
 		setPrivacyAccepted(isChecked);
 		setFieldTouched((prev) => ({ ...prev, privacy: true }));
-		
+
 		// Validar el checkbox
-		const error = validateField('privacy', isChecked ? 'true' : '');
+		const error = validateField("privacy", isChecked ? "true" : "");
 		setFormErrors((prev) => ({ ...prev, privacy: error }));
 	};
 
 	const showPrivacyInfo = async () => {
 		await Swal.fire({
-			title: 'Política de Privacidad',
+			title: "Política de Privacidad",
 			html: `
 				<div style="text-align: left;">
 					<h4 style="color: #374151; margin-bottom: 12px; font-weight: 600;">¿Cómo protegemos tus datos?</h4>
@@ -215,70 +219,76 @@ const Contact = () => {
 					</p>
 				</div>
 			`,
-			icon: 'info',
-			confirmButtonText: 'Entendido',
-			confirmButtonColor: '#10b981',
-			background: '#fefefe',
-			color: '#374151',
+			icon: "info",
+			confirmButtonText: "Entendido",
+			confirmButtonColor: "#10b981",
+			background: "#fefefe",
+			color: "#374151",
 			showClass: {
-				popup: 'animate__animated animate__fadeInUp animate__faster'
+				popup: "animate__animated animate__fadeInUp animate__faster",
 			},
 			hideClass: {
-				popup: 'animate__animated animate__fadeOutDown animate__faster'
-			}
+				popup: "animate__animated animate__fadeOutDown animate__faster",
+			},
 		});
 	};
 
 	const validateField = (name: string, value: string): string => {
 		switch (name) {
-			case 'name': {
-				if (!value.trim()) return 'El nombre es requerido';
-				if (value.trim().length < 2) return 'El nombre debe tener al menos 2 caracteres';
-				if (value.trim().length > 50) return 'El nombre no puede exceder 50 caracteres';
-				if (!/^[a-zA-ZÀ-ÿ\s]+$/.test(value.trim())) return 'El nombre solo puede contener letras y espacios';
-				return '';
+			case "name": {
+				if (!value.trim()) return "El nombre es requerido";
+				if (value.trim().length < 2)
+					return "El nombre debe tener al menos 2 caracteres";
+				if (value.trim().length > 50)
+					return "El nombre no puede exceder 50 caracteres";
+				if (!/^[a-zA-ZÀ-ÿ\s]+$/.test(value.trim()))
+					return "El nombre solo puede contener letras y espacios";
+				return "";
 			}
-				
-			case 'email': {
-				if (!value.trim()) return 'El email es requerido';
+
+			case "email": {
+				if (!value.trim()) return "El email es requerido";
 				const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-				if (!emailRegex.test(value.trim())) return 'Por favor ingresa un email válido';
-				if (value.length > 100) return 'El email no puede exceder 100 caracteres';
-				return '';
+				if (!emailRegex.test(value.trim()))
+					return "Por favor ingresa un email válido";
+				if (value.length > 100) return "El email no puede exceder 100 caracteres";
+				return "";
 			}
-				
-			case 'phone': {
+
+			case "phone": {
 				if (value.trim() && !/^[+]?[\d\s\-()]{10,15}$/.test(value.trim())) {
-					return 'Por favor ingresa un número de teléfono válido';
+					return "Por favor ingresa un número de teléfono válido";
 				}
-				return '';
+				return "";
 			}
-				
-			case 'message': {
-				if (!value.trim()) return 'El mensaje es requerido';
-				if (value.trim().length < 10) return 'El mensaje debe tener al menos 10 caracteres';
-				if (value.trim().length > 1000) return 'El mensaje no puede exceder 1000 caracteres';
-				return '';
+
+			case "message": {
+				if (!value.trim()) return "El mensaje es requerido";
+				if (value.trim().length < 10)
+					return "El mensaje debe tener al menos 10 caracteres";
+				if (value.trim().length > 1000)
+					return "El mensaje no puede exceder 1000 caracteres";
+				return "";
 			}
-			
-			case 'privacy': {
-				if (!value) return 'Debes aceptar la política de privacidad para continuar';
-				return '';
+
+			case "privacy": {
+				if (!value) return "Debes aceptar la política de privacidad para continuar";
+				return "";
 			}
-				
+
 			default:
-				return '';
+				return "";
 		}
 	};
 
 	const validateForm = (): { isValid: boolean; errors: string[] } => {
 		const errors: string[] = [];
 		const fieldErrors = {
-			name: validateField('name', formData.name),
-			email: validateField('email', formData.email),
-			phone: validateField('phone', formData.phone),
-			message: validateField('message', formData.message),
-			privacy: validateField('privacy', privacyAccepted ? 'true' : ''),
+			name: validateField("name", formData.name),
+			email: validateField("email", formData.email),
+			phone: validateField("phone", formData.phone),
+			message: validateField("message", formData.message),
+			privacy: validateField("privacy", privacyAccepted ? "true" : ""),
 		};
 
 		setFormErrors(fieldErrors);
@@ -293,11 +303,11 @@ const Contact = () => {
 		Object.entries(fieldErrors).forEach(([field, error]) => {
 			if (error) {
 				const fieldNames = {
-					name: 'Nombre',
-					email: 'Email',
-					phone: 'Teléfono',
-					message: 'Mensaje',
-					privacy: 'Política de privacidad'
+					name: "Nombre",
+					email: "Email",
+					phone: "Teléfono",
+					message: "Mensaje",
+					privacy: "Política de privacidad",
 				};
 				errors.push(`${fieldNames[field as keyof typeof fieldNames]}: ${error}`);
 			}
@@ -306,50 +316,58 @@ const Contact = () => {
 		return { isValid: errors.length === 0, errors };
 	};
 
-	const getFieldStatus = (fieldName: string): 'idle' | 'valid' | 'invalid' => {
+	const getFieldStatus = (fieldName: string): "idle" | "valid" | "invalid" => {
 		const field = fieldName as keyof typeof fieldTouched;
-		if (!fieldTouched[field]) return 'idle';
-		return formErrors[field] ? 'invalid' : 'valid';
+		if (!fieldTouched[field]) return "idle";
+		return formErrors[field] ? "invalid" : "valid";
 	};
 
 	const getFieldClassName = (fieldName: string): string => {
 		const status = getFieldStatus(fieldName);
-		const baseClasses = 'w-full px-6 py-4 border rounded-2xl focus:ring-2 outline-none transition-all duration-300 bg-white shadow-sm hover:shadow-md text-lg';
-		
+		const baseClasses =
+			"w-full px-6 py-4 border rounded-2xl focus:ring-2 outline-none transition-all duration-300 bg-white shadow-sm hover:shadow-md text-lg";
+
 		switch (status) {
-			case 'valid':
+			case "valid":
 				return `${baseClasses} border-green-400 focus:ring-green-400 focus:border-green-400`;
-			case 'invalid':
+			case "invalid":
 				return `${baseClasses} border-red-400 focus:ring-red-400 focus:border-red-400`;
 			default:
 				return `${baseClasses} border-gray-200 focus:ring-rose-dust-400 focus:border-rose-dust-400`;
 		}
 	};
 
-	const getFormProgress = (): { percentage: number; validFields: number; totalFields: number } => {
-		const requiredFields = ['name', 'email', 'message', 'privacy'];
-		const validFields = requiredFields.filter(field => {
-			if (field === 'privacy') {
+	const getFormProgress = (): {
+		percentage: number;
+		validFields: number;
+		totalFields: number;
+	} => {
+		const requiredFields = ["name", "email", "message", "privacy"];
+		const validFields = requiredFields.filter((field) => {
+			if (field === "privacy") {
 				return privacyAccepted;
 			}
-			return fieldTouched[field as keyof typeof fieldTouched] && 
-				   !formErrors[field as keyof typeof formErrors];
+			return (
+				fieldTouched[field as keyof typeof fieldTouched] &&
+				!formErrors[field as keyof typeof formErrors]
+			);
 		}).length;
-		
+
 		return {
 			percentage: (validFields / requiredFields.length) * 100,
 			validFields,
-			totalFields: requiredFields.length
+			totalFields: requiredFields.length,
 		};
 	};
 
 	const isFormValid = (): boolean => {
-		const requiredFields = ['name', 'email', 'message'];
-		const basicFieldsValid = requiredFields.every(field => 
-			fieldTouched[field as keyof typeof fieldTouched] && 
-			!formErrors[field as keyof typeof formErrors]
+		const requiredFields = ["name", "email", "message"];
+		const basicFieldsValid = requiredFields.every(
+			(field) =>
+				fieldTouched[field as keyof typeof fieldTouched] &&
+				!formErrors[field as keyof typeof formErrors]
 		);
-		
+
 		return basicFieldsValid && !formErrors.phone && privacyAccepted;
 	};
 
@@ -358,35 +376,35 @@ const Contact = () => {
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		
+
 		// Validación completa del formulario
 		const validation = validateForm();
 		if (!validation.isValid) {
 			await Swal.fire({
-				icon: 'warning',
-				title: 'Errores de validación',
+				icon: "warning",
+				title: "Errores de validación",
 				html: `
 					<div style="text-align: left;">
 						<p class="text-gray-600 mb-3">Por favor corrige los siguientes errores:</p>
 						<ul class="text-sm text-red-600 space-y-1 list-disc list-inside">
-							${validation.errors.map(error => `<li>${error}</li>`).join('')}
+							${validation.errors.map((error) => `<li>${error}</li>`).join("")}
 						</ul>
 					</div>
 				`,
-				confirmButtonText: 'Entendido',
-				confirmButtonColor: '#f43f5e',
-				background: '#fefefe',
-				color: '#374151',
+				confirmButtonText: "Entendido",
+				confirmButtonColor: "#f43f5e",
+				background: "#fefefe",
+				color: "#374151",
 				showClass: {
-					popup: 'animate__animated animate__fadeInUp animate__faster'
+					popup: "animate__animated animate__fadeInUp animate__faster",
 				},
 				hideClass: {
-					popup: 'animate__animated animate__fadeOutDown animate__faster'
-				}
+					popup: "animate__animated animate__fadeOutDown animate__faster",
+				},
 			});
 			return;
 		}
-		
+
 		const lastSent = localStorage.getItem(RATE_LIMIT_KEY);
 		const now = Date.now();
 
@@ -544,6 +562,12 @@ const Contact = () => {
 			id="contacto"
 			className="relative min-h-screen flex items-center py-20 md:py-32 bg-gradient-to-br from-rose-dust-50 via-cream-50 to-sage-50 overflow-hidden"
 		>
+			{/* Magic particles for inspiring connection */}
+			<MagicParticles density="high" color="warm" behavior="dynamic" />
+
+			{/* Floating decorative elements - Solo 1 elemento */}
+			<FloatingElements variant="butterflies" count={1} section="contact" />
+
 			{/* Minimal floral accent background (animated) */}
 			<div className="pointer-events-none absolute inset-0 overflow-hidden select-none">
 				{/* Soft radial tints */}
@@ -686,7 +710,7 @@ const Contact = () => {
 								<h3 className="text-2xl md:text-3xl font-serif font-light text-gray-800 mb-6">
 									Solicita tu Consulta de Psicología Online
 								</h3>
-								
+
 								{/* Barra de progreso de validación */}
 								<div className="mb-8 bg-gray-100 rounded-full p-1">
 									<div className="flex items-center justify-between mb-2">
@@ -694,15 +718,16 @@ const Contact = () => {
 											Progreso del formulario
 										</span>
 										<span className="text-sm text-gray-500">
-											{getFormProgress().validFields} / {getFormProgress().totalFields} campos
+											{getFormProgress().validFields} / {getFormProgress().totalFields}{" "}
+											campos
 										</span>
 									</div>
 									<div className="w-full bg-gray-200 rounded-full h-2">
-										<div 
+										<div
 											className={`h-2 rounded-full transition-all duration-500 ${
-												getFormProgress().percentage === 100 
-													? 'bg-gradient-to-r from-green-400 to-green-600' 
-													: 'bg-gradient-to-r from-rose-dust-400 to-sage-400'
+												getFormProgress().percentage === 100
+													? "bg-gradient-to-r from-green-400 to-green-600"
+													: "bg-gradient-to-r from-rose-dust-400 to-sage-400"
 											}`}
 											style={{ width: `${getFormProgress().percentage}%` }}
 										></div>
@@ -728,7 +753,7 @@ const Contact = () => {
 												onChange={handleChange}
 												onBlur={handleBlur}
 												required
-												className={getFieldClassName('name')}
+												className={getFieldClassName("name")}
 												placeholder="Tu nombre"
 											/>
 											{fieldTouched.name && (
@@ -760,7 +785,7 @@ const Contact = () => {
 												onChange={handleChange}
 												onBlur={handleBlur}
 												required
-												className={getFieldClassName('email')}
+												className={getFieldClassName("email")}
 												placeholder="tu.email@ejemplo.com"
 											/>
 											{fieldTouched.email && (
@@ -793,7 +818,7 @@ const Contact = () => {
 												value={formData.phone}
 												onChange={handleChange}
 												onBlur={handleBlur}
-												className={getFieldClassName('phone')}
+												className={getFieldClassName("phone")}
 												placeholder="+52 XXX XXX XXX"
 											/>
 											{fieldTouched.phone && (
@@ -829,7 +854,9 @@ const Contact = () => {
 											onBlur={handleBlur}
 											required
 											rows={5}
-											className={getFieldClassName('message') + ' resize-none flex-1 min-h-[200px]'}
+											className={
+												getFieldClassName("message") + " resize-none flex-1 min-h-[200px]"
+											}
 											placeholder="¿En qué puedo ayudarte? Describe brevemente tu situación o las dudas que tienes sobre la terapia online..."
 											maxLength={1000}
 										/>
@@ -848,13 +875,15 @@ const Contact = () => {
 										)}
 									</div>
 									<div className="form-field">
-										<div className={`flex items-start gap-3 p-4 rounded-2xl border-2 transition-all duration-300 bg-white shadow-sm hover:shadow-md ${
-											formErrors.privacy && fieldTouched.privacy
-												? 'border-red-200 bg-red-50'
-												: privacyAccepted
-												? 'border-green-200 bg-green-50'
-												: 'border-gray-200 hover:border-rose-dust-300'
-										}`}>
+										<div
+											className={`flex items-start gap-3 p-4 rounded-2xl border-2 transition-all duration-300 bg-white shadow-sm hover:shadow-md ${
+												formErrors.privacy && fieldTouched.privacy
+													? "border-red-200 bg-red-50"
+													: privacyAccepted
+													? "border-green-200 bg-green-50"
+													: "border-gray-200 hover:border-rose-dust-300"
+											}`}
+										>
 											<div className="relative">
 												<input
 													type="checkbox"
@@ -864,10 +893,10 @@ const Contact = () => {
 													required
 													className={`w-5 h-5 rounded border-2 focus:ring-2 focus:ring-offset-0 transition-all duration-300 mt-1 cursor-pointer ${
 														formErrors.privacy && fieldTouched.privacy
-															? 'border-red-400 focus:ring-red-400 text-red-600'
+															? "border-red-400 focus:ring-red-400 text-red-600"
 															: privacyAccepted
-															? 'border-green-400 focus:ring-green-400 text-green-600'
-															: 'border-gray-300 focus:ring-rose-dust-500 text-rose-dust-600 hover:border-rose-dust-400'
+															? "border-green-400 focus:ring-green-400 text-green-600"
+															: "border-gray-300 focus:ring-rose-dust-500 text-rose-dust-600 hover:border-rose-dust-400"
 													}`}
 												/>
 												{privacyAccepted && (
@@ -877,7 +906,10 @@ const Contact = () => {
 												)}
 											</div>
 											<div className="flex-1">
-												<label htmlFor="privacy" className="text-gray-700 leading-relaxed cursor-pointer">
+												<label
+													htmlFor="privacy"
+													className="text-gray-700 leading-relaxed cursor-pointer"
+												>
 													<span className="font-medium">Acepto la</span>{" "}
 													<a
 														href="/politicas-privacidad"
@@ -927,11 +959,17 @@ const Contact = () => {
 										type="submit"
 										disabled={isSubmitting || !isFormValid()}
 										className={`btn-primary w-full md:w-auto inline-flex items-center justify-center gap-3 text-lg px-8 py-4 transition-all duration-300 ${
-											isSubmitting ? "opacity-75 cursor-not-allowed" :
-											!isFormValid() ? "opacity-60 cursor-not-allowed" :
-											"hover:scale-105"
+											isSubmitting
+												? "opacity-75 cursor-not-allowed"
+												: !isFormValid()
+												? "opacity-60 cursor-not-allowed"
+												: "hover:scale-105"
 										}`}
-										title={!isFormValid() ? "Completa todos los campos requeridos correctamente" : ""}
+										title={
+											!isFormValid()
+												? "Completa todos los campos requeridos correctamente"
+												: ""
+										}
 									>
 										{isSubmitting ? (
 											<>
@@ -941,30 +979,36 @@ const Contact = () => {
 										) : (
 											<>
 												{isFormValid() ? (
-													<>Solicitar Consulta Online <Send size={20} /></>
+													<>
+														Solicitar Consulta Online <Send size={20} />
+													</>
 												) : (
-													<>Completa el formulario <Send size={20} /></>
+													<>
+														Completa el formulario <Send size={20} />
+													</>
 												)}
 											</>
 										)}
 									</button>
-									
+
 									{/* Indicador de estado del formulario */}
-									{!isFormValid() && Object.values(fieldTouched).some(touched => touched) && (
-										<div className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-2xl">
-											<div className="flex items-start gap-3">
-												<span className="text-amber-600 text-lg">⚠️</span>
-												<div>
-													<h4 className="text-amber-800 font-medium mb-1">
-														Formulario incompleto
-													</h4>
-													<p className="text-amber-700 text-sm">
-														Por favor, completa y corrige todos los campos marcados para continuar.
-													</p>
+									{!isFormValid() &&
+										Object.values(fieldTouched).some((touched) => touched) && (
+											<div className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-2xl">
+												<div className="flex items-start gap-3">
+													<span className="text-amber-600 text-lg">⚠️</span>
+													<div>
+														<h4 className="text-amber-800 font-medium mb-1">
+															Formulario incompleto
+														</h4>
+														<p className="text-amber-700 text-sm">
+															Por favor, completa y corrige todos los campos marcados para
+															continuar.
+														</p>
+													</div>
 												</div>
 											</div>
-										</div>
-									)}
+										)}
 								</form>
 							</div>
 						</div>

@@ -1,0 +1,42 @@
+{
+	"name": "Psicóloga Clínica Montserrat Herbert",
+	"short_name": "Montserrat Psicología",
+	"description": "Terapia psicológica online especializada en ansiedad, depresión y problemas emocionales",
+	"start_url": "/",
+	"display": "standalone",
+	"background_color": "#ffffff",
+	"theme_color": "#6366f1",
+	"icons": [
+		{
+			"src": "/favicon.svg",
+			"sizes": "any",
+			"type": "image/svg+xml",
+			"purpose": "any maskable"
+		},
+		{
+			"src": "/favicon-16x16.svg",
+			"sizes": "16x16",
+			"type": "image/svg+xml"
+		},
+		{
+			"src": "/favicon.svg",
+			"sizes": "32x32",
+			"type": "image/svg+xml"
+		},
+		{
+			"src": "/favicon.svg",
+			"sizes": "180x180",
+			"type": "image/svg+xml"
+		},
+		{
+			"src": "/favicon.svg",
+			"sizes": "512x512",
+			"type": "image/svg+xml",
+			"purpose": "any maskable"
+		}
+	],
+	"categories": ["health", "medical", "lifestyle"],
+	"lang": "es",
+	"scope": "/",
+	"orientation": "portrait-primary"
+}

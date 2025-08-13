@@ -14,18 +14,28 @@ export default defineConfig({
 				// Manual code splitting para mejor cache
 				manualChunks: {
 					// Vendor chunk para librerías principales
-					vendor: ['react', 'react-dom', 'react-router-dom'],
+					vendor: ["react", "react-dom", "react-router-dom"],
 					// GSAP en chunk separado por su tamaño
-					gsap: ['gsap'],
+					gsap: ["gsap"],
 					// Lucide icons en chunk separado
-					icons: ['lucide-react'],
+					icons: ["lucide-react"],
 					// Supabase en chunk separado
-					supabase: ['@supabase/supabase-js'],
+					supabase: ["@supabase/supabase-js"],
+					// Lottie en chunk separado
+					lottie: ["lottie-react"],
 				},
+			},
+			// Ignorar warnings de eval en dependencias de terceros
+			onwarn(warning, warn) {
+				// Ignorar warnings de eval en lottie-web
+				if (warning.code === "EVAL" && warning.id?.includes("lottie")) {
+					return;
+				}
+				warn(warning);
 			},
 		},
 		// Optimización para production
-		minify: 'terser',
+		minify: "terser",
 		terserOptions: {
 			compress: {
 				drop_console: true, // Remover console.logs en production
@@ -37,7 +47,7 @@ export default defineConfig({
 	},
 	// Optimización de dependencias
 	optimizeDeps: {
-		include: ['react', 'react-dom', 'react-router-dom'],
-		exclude: ['lucide-react', 'gsap'], // Se cargan lazy
+		include: ["react", "react-dom", "react-router-dom"],
+		exclude: ["lucide-react", "gsap"], // Se cargan lazy
 	},
 });

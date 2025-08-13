@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from "react";
 import LayoutContainer from "./LayoutContainer";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import MagicParticles from "./MagicParticles";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -91,8 +92,11 @@ const AboutMe = () => {
 		<section
 			ref={sectionRef}
 			id="sobre-mí"
-			className="section-modern bg-gradient-to-br from-rose-dust-50 via-cream-50 to-sage-50 overflow-hidden"
+			className="section-modern bg-gradient-to-br from-rose-dust-50 via-cream-50 to-sage-50 overflow-hidden relative"
 		>
+			{/* Magic particles for peaceful atmosphere */}
+			<MagicParticles density="low" color="nature" behavior="gentle" />
+
 			<LayoutContainer>
 				<div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
 					<div className="w-full lg:w-2/5 flex justify-center">
