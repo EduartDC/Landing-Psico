@@ -26,36 +26,52 @@ const Testimonials = () => {
 	const testimonials: Testimonial[] = [
 		{
 			text:
-				"Antes de acudir a la Dra. Sánchez, la ansiedad controlaba mi vida. Después de varios meses de terapia, he aprendido a manejar mis pensamientos y emociones de forma mucho más saludable. Ahora tengo herramientas que me ayudan día a día.",
-			author: "Laura G.",
-			role: "Paciente de terapia individual online",
-			initial: "L",
+				"La terapia con Montse me ha ayudado mucho a descubrirme, pero lo más importante ha sido aprender a perdonarme. Ya no siento culpa ni miedo de ser quien soy.",
+			author: "A.",
+			role: "23 años",
+			initial: "A",
 			color:
 				"bg-gradient-to-br from-rose-dust-100 to-rose-dust-200 text-rose-dust-800",
 		},
 		{
 			text:
-				"Mi esposa y yo estábamos al borde del divorcio cuando decidimos probar la terapia de pareja. La Dra. Sánchez nos ayudó a mejorar nuestra comunicación y a entender las necesidades del otro. Ha sido un proceso transformador para nuestra relación.",
-			author: "Miguel y Ana S.",
-			role: "Pacientes de terapia de pareja online",
-			initial: "M",
+				"Con la Psico, en mi proceso descubrí que lo que me dolía tenía un origen, y me ha ayudado a entenderlo. Sigo aprendiendo cosas sobre mí e identificando las partes que aún puedo mejorar.",
+			author: "J.",
+			role: "36 años.",
+			initial: "J",
 			color: "bg-gradient-to-br from-cream-100 to-cream-200 text-cream-800",
 		},
 		{
 			text:
-				"Después de años luchando con ataques de pánico, finalmente encontré ayuda real. Las técnicas que aprendí me han permitido recuperar mi vida social y profesional. La empatía y profesionalidad de la Dra. Sánchez marcaron la diferencia.",
-			author: "Carlos M.",
-			role: "Paciente de manejo de ansiedad online",
-			initial: "C",
+				"Al principio tenía muchas dudas y resistencia, pero gracias a la Psicóloga Montse encontré un acompañamiento que me permitió encontrarme y vivir con libertad por primera vez.",
+			author: "M.A.",
+			role: "56 años.",
+			initial: "M",
 			color:
 				"bg-gradient-to-br from-dusty-blue-100 to-dusty-blue-200 text-dusty-blue-800",
 		},
 		{
 			text:
-				"Como expatriada, la terapia online ha sido un salvavidas. A pesar de la distancia, las sesiones son cercanas y efectivas. He notado un gran cambio en cómo manejo el estrés y las situaciones difíciles en mi día a día.",
-			author: "Elena R.",
-			role: "Paciente de terapia online",
-			initial: "E",
+				"Estoy orgullosa de mí misma y muy agradecida porque Montse me acompañó y guió para afrontar el proceso de denuncia hacia mi agresor. Sigo conociéndome y aprendiendo a cuidarme.",
+			author: "A.",
+			role: "29 años.",
+			initial: "A",
+			color: "bg-gradient-to-br from-sage-100 to-sage-200 text-sage-800",
+		},
+		{
+			text:
+				"Mi proceso con la Psico me ayudó a entender que no soy una mala madre, sino que estoy maternando con mis propios recursos. Me he reconciliado con mi maternidad y con el cuidado de mis hijos.",
+			author: "C.",
+			role: "33 años.",
+			initial: "C",
+			color: "bg-gradient-to-br from-sage-100 to-sage-200 text-sage-800",
+		},
+		{
+			text:
+				"La encontré en un momento muy difícil. Hoy, cuando escucho una canción que significa mucho para mí, pienso en todo lo que me ha ayudado y me siento muy agradecida.",
+			author: "L.",
+			role: "42 años.",
+			initial: "L",
 			color: "bg-gradient-to-br from-sage-100 to-sage-200 text-sage-800",
 		},
 	];
@@ -123,7 +139,7 @@ const Testimonials = () => {
 			setCurrentIndex((prevIndex) =>
 				prevIndex >= testimonials.length - 2 ? 0 : prevIndex + 2
 			);
-		}, 5000);
+		}, 7000);
 
 		return () => clearInterval(interval);
 	}, [testimonials.length]);
@@ -168,26 +184,26 @@ const Testimonials = () => {
 	};
 
 	const TestimonialCard = ({ testimonial }: { testimonial: Testimonial }) => (
-		<div className="card-modern group relative overflow-hidden hover:shadow-2xl transition-all duration-500 h-full min-h-[320px] flex flex-col">
+		<div className="card-modern group relative overflow-hidden hover:shadow-2xl transition-all duration-500 h-full flex flex-col">
 			<div className="absolute inset-0 bg-white/90 group-hover:bg-white/95 transition-all duration-500"></div>
 
-			<Quote className="absolute top-6 right-6 w-10 h-10 text-rose-dust-200 opacity-30 transform rotate-12" />
+			<Quote className="absolute top-5 right-5 w-8 h-8 text-rose-dust-200 opacity-30 transform rotate-12" />
 
-			<div className="relative z-10 flex-grow flex flex-col">
-				<p className="text-gray-700 leading-relaxed mb-4 text-lg italic flex-grow">
+			<div className="relative z-10 flex flex-col p-6 h-full justify-between">
+				<p className="text-gray-700 leading-relaxed text-base italic">
 					"{testimonial.text}"
 				</p>
-				<div className="flex items-center gap-4">
+				<div className="flex items-center gap-3 mt-3">
 					<div
-						className={`w-14 h-14 rounded-full flex items-center justify-center ${testimonial.color} shadow-lg flex-shrink-0`}
+						className={`w-12 h-12 rounded-full flex items-center justify-center ${testimonial.color} shadow-lg flex-shrink-0`}
 					>
-						<span className="text-xl font-medium">{testimonial.initial}</span>
+						<span className="text-lg font-medium">{testimonial.initial}</span>
 					</div>
 					<div>
-						<h4 className="font-medium text-gray-800 text-lg">
+						<h4 className="font-medium text-gray-800 text-base">
 							{testimonial.author}
 						</h4>
-						<p className="text-gray-600">{testimonial.role}</p>
+						<p className="text-gray-600 text-sm">{testimonial.role}</p>
 					</div>
 				</div>
 			</div>
@@ -244,19 +260,19 @@ const Testimonials = () => {
 					</p>
 				</div>
 
-				<div
-					ref={carouselRef}
-					className="relative w-full max-w-none mx-auto px-4 md:px-8"
-				>
-					<div className="overflow-x-hidden overflow-y-visible px-4 py-8">
+				<div ref={carouselRef} className="relative w-full max-w-6xl mx-auto">
+					<div className="overflow-hidden px-0 py-8">
 						<div
-							className="flex gap-6 md:gap-8 transition-transform duration-500 ease-in-out"
-							style={{ transform: `translateX(-${currentIndex * 50}%)` }}
+							className="flex transition-transform duration-[1000ms] ease-in-out"
+							style={{
+								transform: `translateX(-${(currentIndex / 2) * 100}%)`,
+							}}
 						>
 							{testimonials.map((testimonial, index) => (
 								<div
 									key={index}
-									className="w-full md:w-1/2 flex-shrink-0 px-4 md:px-6 py-4"
+									className="flex-shrink-0 px-2"
+									style={{ width: "50%" }}
 								>
 									<TestimonialCard testimonial={testimonial} />
 								</div>
@@ -266,7 +282,7 @@ const Testimonials = () => {
 
 					<button
 						onClick={prevTestimonial}
-						className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 bg-white text-rose-dust-700 p-3 rounded-full shadow-xl hover:bg-rose-dust-50 transition-all duration-300 transform hover:scale-110 border border-rose-dust-100 z-10"
+						className="absolute -left-6 top-1/2 -translate-y-1/2 bg-white text-rose-dust-700 p-3 rounded-full shadow-xl hover:bg-rose-dust-50 transition-all duration-300 transform hover:scale-110 border border-rose-dust-100 z-10"
 						aria-label="Previous testimonial"
 					>
 						<ChevronLeft className="w-6 h-6" />
@@ -274,7 +290,7 @@ const Testimonials = () => {
 
 					<button
 						onClick={nextTestimonial}
-						className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 bg-white text-rose-dust-700 p-3 rounded-full shadow-xl hover:bg-rose-dust-50 transition-all duration-300 transform hover:scale-110 border border-rose-dust-100 z-10"
+						className="absolute -right-6 top-1/2 -translate-y-1/2 bg-white text-rose-dust-700 p-3 rounded-full shadow-xl hover:bg-rose-dust-50 transition-all duration-300 transform hover:scale-110 border border-rose-dust-100 z-10"
 						aria-label="Next testimonial"
 					>
 						<ChevronRight className="w-6 h-6" />

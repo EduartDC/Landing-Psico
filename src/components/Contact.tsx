@@ -304,7 +304,12 @@ const Contact = () => {
 									Información de Contacto
 								</h3>
 								<div className="space-y-6 md:space-y-8">
-									<SecureContactInfo />
+									<SecureContactInfo
+										showEmail={true}
+										showPhone={true}
+										showWhatsApp={true}
+										className="[&_.contact-item]:flex [&_.contact-item]:items-start [&_.contact-item]:gap-4 [&_.contact-item]:mb-6 [&_.contact-item]:p-5 [&_.contact-item]:bg-gradient-to-br [&_.contact-item]:from-white [&_.contact-item]:to-gray-50 [&_.contact-item]:rounded-2xl [&_.contact-item]:border [&_.contact-item]:border-gray-200 [&_.contact-item]:shadow-sm [&_.contact-item:hover]:shadow-md [&_.contact-item]:transition-all [&_.contact-item]:duration-300 [&_h4]:text-gray-800 [&_h4]:font-medium [&_h4]:text-lg [&_h4]:mb-2 [&_p]:text-gray-600 [&_button]:text-rose-dust-600 [&_button:hover]:text-rose-dust-700 [&_button]:font-medium [&_button]:transition-colors [&_.bg-teal-100]:bg-gradient-to-br [&_.bg-teal-100]:from-rose-dust-100 [&_.bg-teal-100]:to-rose-dust-200 [&_.text-teal-700]:text-rose-dust-700 [&_.p-3]:p-3 [&_.rounded-full]:rounded-2xl"
+									/>
 									{/* Typing dots decorative */}
 								</div>
 								<div className="contact-item mt-8 md:mt-10 p-6 rounded-2xl bg-gradient-to-br from-sage-100 to-dusty-blue-100 border border-sage-200 mt-auto relative">
@@ -436,6 +441,15 @@ const Contact = () => {
 											y el tratamiento de mis datos.
 										</label>
 									</div>
+									{/* Honeypot field for bot protection */}
+									<input
+										type="text"
+										name="website"
+										style={{ position: "absolute", left: "-9999px", opacity: 0 }}
+										tabIndex={-1}
+										autoComplete="off"
+										onChange={() => {}}
+									/>
 									<button
 										type="submit"
 										className="btn-primary w-full md:w-auto inline-flex items-center justify-center gap-3 text-lg px-8 py-4"
