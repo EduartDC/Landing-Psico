@@ -133,6 +133,17 @@ html {
   }
 }
 
+/* Shimmer animation for loading skeletons */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
 .flora-sway {
   animation: flora-sway 6s ease-in-out infinite;
 }
@@ -140,5 +151,17 @@ html {
 @media (prefers-reduced-motion: reduce) {
   .flora-sway {
     animation: none;
+  }
+
+  @keyframes shimmer {
+
+    0%,
+    100% {
+      opacity: 1;
+    }
+
+    50% {
+      opacity: 0.8;
+    }
   }
 }

@@ -1,17 +1,42 @@
-import { useEffect } from "react";
+import { useEffect, lazy, Suspense } from "react";
 import Hero from "../components/Hero";
 import AboutMe from "../components/AboutMe";
 import Services from "../components/Services";
-import Approach from "../components/Approach";
-import Process from "../components/Process";
-import Testimonials from "../components/Testimonials";
-import Contact from "../components/Contact";
+import LoadingSkeleton from "../components/LoadingSkeleton";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { usePreloadComponent } from "../hooks/usePreloadComponent";
+
+// Lazy loading de componentes pesados que aparecen más abajo en la página
+const Approach = lazy(() => import("../components/Approach"));
+const Process = lazy(() => import("../components/Process"));
+const Testimonials = lazy(() => import("../components/Testimonials"));
+const Contact = lazy(() => import("../components/Contact"));
 
 gsap.registerPlugin(ScrollTrigger);
 
 const Home = () => {
+	// Preload inteligente - cargar componentes antes de que sean visibles
+	const { elementRef: approachRef } = usePreloadComponent(
+		() => import("../components/Approach"),
+		{ rootMargin: "300px" }
+	);
+
+	const { elementRef: processRef } = usePreloadComponent(
+		() => import("../components/Process"),
+		{ rootMargin: "300px" }
+	);
+
+	const { elementRef: testimonialsRef } = usePreloadComponent(
+		() => import("../components/Testimonials"),
+		{ rootMargin: "300px" }
+	);
+
+	const { elementRef: contactRef } = usePreloadComponent(
+		() => import("../components/Contact"),
+		{ rootMargin: "300px" }
+	);
+
 	useEffect(() => {
 		// Si llegamos con hash (#enfoque, etc.) hacer scroll después de montar secciones
 		const hash = window.location.hash.replace("#", "");
@@ -57,10 +82,28 @@ const Home = () => {
 			<Hero />
 			<AboutMe />
 			<Services />
-			<Approach />
-			<Process />
-			<Testimonials />
-			<Contact />
+			<Suspense fallback={<LoadingSkeleton type="section" />}>
+				<div ref={approachRef}>
+					<Approach />
+				</div>
+			</Suspense>
+			<Suspense fallback={<LoadingSkeleton type="process" />}>
+				<div ref={processRef}>
+					<Process />
+				</div>
+			</Suspense>
+			<Suspense fallback={<LoadingSkeleton type="testimonials" />}>
+				<div ref={testimonialsRef}>
+					<Testimonials />
+				</div>
+			</Suspense>
+			<Suspense
+				fallback={<LoadingSkeleton type="contact" className="min-h-[600px]" />}
+			>
+				<div ref={contactRef}>
+					<Contact />
+				</div>
+			</Suspense>
 		</>
 	);
 };
