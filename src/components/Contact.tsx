@@ -4,6 +4,8 @@ import { Send } from "lucide-react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SecureContactInfo from "./SecureContactInfo";
+import { getContactInfo, createWhatsAppLink } from "../utils/contactSecurity";
+import Swal from "sweetalert2";
 import React from "react";
 // Edge Function endpoint and anon key from environment
 const FUNCTION_URL = import.meta.env.VITE_SUPABASE_URL;
@@ -30,7 +32,7 @@ const Contact = () => {
 		phone: "",
 		message: "",
 	});
-	const [successMessage, setSuccessMessage] = useState("");
+	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	useEffect(() => {
 		const ctx = gsap.context(() => {
@@ -159,17 +161,75 @@ const Contact = () => {
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		const lastSent = localStorage.getItem(RATE_LIMIT_KEY);
-		const now = Date.now();
-		// Enforce rate limit: only one submission per 5 minutes
-		if (lastSent && now - parseInt(lastSent) < RATE_LIMIT_MS) {
-			setSuccessMessage(
-				"Solo puedes enviar un mensaje cada 5 minutos desde este navegador."
-			);
+
+		// Validación básica antes de procesar
+		if (
+			!formData.name.trim() ||
+			!formData.email.trim() ||
+			!formData.message.trim()
+		) {
+			await Swal.fire({
+				icon: "warning",
+				title: "Campos requeridos",
+				text: "Por favor completa todos los campos obligatorios.",
+				confirmButtonText: "Entendido",
+				confirmButtonColor: "#f43f5e",
+				background: "#fefefe",
+				color: "#374151",
+				showClass: {
+					popup: "animate__animated animate__fadeInUp animate__faster",
+				},
+				hideClass: {
+					popup: "animate__animated animate__fadeOutDown animate__faster",
+				},
+			});
 			return;
 		}
+
+		const lastSent = localStorage.getItem(RATE_LIMIT_KEY);
+		const now = Date.now();
+
+		// Enforce rate limit: only one submission per 5 minutes
+		if (lastSent && now - parseInt(lastSent) < RATE_LIMIT_MS) {
+			await Swal.fire({
+				icon: "warning",
+				title: "Espera un momento",
+				text: "Solo puedes enviar un mensaje cada 5 minutos desde este navegador.",
+				confirmButtonText: "Entendido",
+				confirmButtonColor: "#f43f5e",
+				background: "#fefefe",
+				color: "#374151",
+				showClass: {
+					popup: "animate__animated animate__fadeInUp animate__faster",
+				},
+				hideClass: {
+					popup: "animate__animated animate__fadeOutDown animate__faster",
+				},
+			});
+			return;
+		}
+
+		// Mostrar loading
+		setIsSubmitting(true);
+		Swal.fire({
+			title: "Enviando mensaje...",
+			text: "Por favor espera mientras procesamos tu solicitud",
+			allowOutsideClick: false,
+			allowEscapeKey: false,
+			showConfirmButton: false,
+			background: "#fefefe",
+			color: "#374151",
+			showClass: {
+				popup: "animate__animated animate__fadeInUp animate__faster",
+			},
+			didOpen: () => {
+				Swal.showLoading();
+			},
+		});
+
 		// Debug log start of submission
 		console.log("handleSubmit invoked, data:", formData);
+
 		try {
 			// Send data to Edge Function via HTTP POST
 			const response = await fetch(FUNCTION_URL, {
@@ -181,18 +241,84 @@ const Contact = () => {
 				},
 				body: JSON.stringify(formData),
 			});
+
 			if (!response.ok) {
 				const errorData = await response.json().catch(() => null);
 				throw new Error(errorData?.message || `Error ${response.status}`);
 			}
+
 			const result = await response.json().catch(() => null);
 			console.log("Edge Function response:", result);
-			setSuccessMessage("¡Mensaje enviado correctamente!");
+
+			// Obtener información de contacto para personalizar mensaje
+			const contactInfo = await getContactInfo();
+
+			// Éxito - mostrar mensaje elegante
+			await Swal.fire({
+				icon: "success",
+				title: "¡Mensaje enviado correctamente!",
+				html: `
+					<div style="text-align: center;">
+						<p class="text-gray-600 mb-4">Gracias por contactarme, <strong>${formData.name}</strong>.</p>
+						<p class="text-gray-600">Te responderé a la brevedad en <strong>${formData.email}</strong></p>
+						<p class="text-sm text-gray-500 mt-4">- ${contactInfo.doctorName}</p>
+					</div>
+				`,
+				confirmButtonText: "Perfecto",
+				confirmButtonColor: "#10b981",
+				background: "#fefefe",
+				color: "#374151",
+				showClass: {
+					popup: "animate__animated animate__fadeInUp animate__faster",
+				},
+				hideClass: {
+					popup: "animate__animated animate__fadeOutDown animate__faster",
+				},
+				timer: 5000,
+				timerProgressBar: true,
+			});
+
+			// Limpiar formulario y guardar timestamp
 			setFormData({ name: "", email: "", phone: "", message: "" });
 			localStorage.setItem(RATE_LIMIT_KEY, now.toString());
 		} catch (err) {
 			console.error("Error sending contact form:", err);
-			setSuccessMessage("Hubo un error al enviar el mensaje. Intenta nuevamente.");
+
+			// Error - mostrar mensaje de error elegante
+			await Swal.fire({
+				icon: "error",
+				title: "Error al enviar mensaje",
+				html: `
+					<div style="text-align: center;">
+						<p class="text-gray-600 mb-4">Hubo un problema al enviar tu mensaje.</p>
+						<p class="text-gray-600">Por favor, intenta nuevamente o contáctame directamente por WhatsApp.</p>
+					</div>
+				`,
+				confirmButtonText: "Intentar de nuevo",
+				confirmButtonColor: "#ef4444",
+				background: "#fefefe",
+				color: "#374151",
+				showCancelButton: true,
+				cancelButtonText: "Contactar por WhatsApp",
+				cancelButtonColor: "#22c55e",
+				showClass: {
+					popup: "animate__animated animate__fadeInUp animate__faster",
+				},
+				hideClass: {
+					popup: "animate__animated animate__fadeOutDown animate__faster",
+				},
+			}).then(async (result) => {
+				if (result.dismiss === Swal.DismissReason.cancel) {
+					// Abrir WhatsApp con información dinámica
+					const message = `Hola, me interesa obtener más información sobre los servicios de psicología online. Mi nombre es ${
+						formData.name || "[Nombre]"
+					}.`;
+					const whatsappLink = await createWhatsAppLink(message);
+					window.open(whatsappLink, "_blank");
+				}
+			});
+		} finally {
+			setIsSubmitting(false);
 		}
 	};
 
@@ -452,14 +578,23 @@ const Contact = () => {
 									/>
 									<button
 										type="submit"
-										className="btn-primary w-full md:w-auto inline-flex items-center justify-center gap-3 text-lg px-8 py-4"
+										disabled={isSubmitting}
+										className={`btn-primary w-full md:w-auto inline-flex items-center justify-center gap-3 text-lg px-8 py-4 transition-all duration-300 ${
+											isSubmitting ? "opacity-75 cursor-not-allowed" : "hover:scale-105"
+										}`}
 									>
-										Solicitar Consulta Online <Send size={20} />
+										{isSubmitting ? (
+											<>
+												<div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+												Enviando...
+											</>
+										) : (
+											<>
+												Solicitar Consulta Online <Send size={20} />
+											</>
+										)}
 									</button>
 								</form>
-								{successMessage && (
-									<p className="mt-4 text-green-600">{successMessage}</p>
-								)}
 							</div>
 						</div>
 					</div>
